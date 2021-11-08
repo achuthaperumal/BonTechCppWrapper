@@ -37,7 +37,7 @@ int main()
     LVHeight = 3052;
     LVWidth = 2500;
     pixel.grayscale = 65535;
-
+    imaqSetWindowThreadPolicy(IMAQ_SEPARATE_THREAD);
     unsigned short* pSrc = new unsigned short[LVWidth * LVHeight * 2];
     readRawFile(pSrc, LVWidth, LVHeight);
 
