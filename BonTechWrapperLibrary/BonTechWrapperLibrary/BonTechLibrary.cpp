@@ -1,35 +1,13 @@
 #include "pch.h"
 #include<fstream>
-#include "math.h"
 #include "BonTechLibrary.h"
 #include "ImageCAPDllEx.h"
 using namespace std;
-#define M_PI 3.14
+
 
 static int nErrorCode;
-
-//Test Function
-double GetSA(double radius)
-//Calculate surface area of a Sphere for given radius
-{
-    return 4 * M_PI * radius * radius;
-}
-
-double GetVol(double radius)
-//Calculate volume of a Sphere for given radius
-{
-    return 4.0 / 3.0 * M_PI * pow(radius, 3.0);
-}
-
-int __stdcall GetSphereSAandVol(double radius, double* sa, double* vol)
-//Calculate the surface area and volume of a sphere with given radius
-{
-    if (radius < 0)
-        return false; //return false (0) if radius is negative
-    *sa = GetSA(radius);
-    *vol = GetVol(radius);
-    return true;
-}
+char* pSrc = new char[3052 * 2500 * 2];
+unsigned short* refImg = NULL;
 
 
 int __stdcall Connect(unsigned int nHostIP, unsigned int nSensorIP, LPTSTR ConfigDir)
@@ -59,9 +37,17 @@ int __stdcall SetAcquisitionMode(unsigned int nSensorIP, int nMode)
     return nErrorCode;
 }
 
-int __stdcall StartContinuousAcquisition(unsigned int nSensorIP)
-{//Send ImageCapCommandSend and then call ImageCapStartCapture
-    //TODO: Launch a Thread
+int __stdcall SetCaptureMode(unsigned int nSensorIP, int nMode)
+{
+    nErrorCode = ImageCapCommandSend(nSensorIP, nMode);
+    return nErrorCode;
+}
+
+int __stdcall StartContinuousAcquisition(unsigned int nSensorIP, unsigned short *pImage, unsigned int nMode, LPCTSTR lpszRefPath)
+{
+    
+    nErrorCode = ImageCapStartCapture(nSensorIP, &refImg, nMode, lpszRefPath);
+    memcpy(pImage, refImg, 3072 * 3072 * 2);
     return nErrorCode;
 
 }
@@ -72,10 +58,10 @@ int __stdcall StopContinuousAcquisition(unsigned int nSensorIP)
     return nErrorCode;
 }
 
-int __stdcall CaptureSingleImage(unsigned int nSensorIP)
-{//Capture using ImageCap
-    //TODO: Capture Single Image and pass it to LabVIEW
-    //nErrorCode = ImageCapImageAcquistion(nSensorIP, unsigned short *pImage)
+int __stdcall CaptureSingleImage(unsigned int nSensorIP, unsigned short* pImage,unsigned int nMode, LPCTSTR calRefPath)
+{
+    nErrorCode = ImageCapImageAcquistion(nSensorIP, pImage, nMode,calRefPath);
+    //memcpy(pImage, testImg, 3072 * 3072 * 2);
     return nErrorCode;
 }
 
@@ -99,35 +85,14 @@ int readRawFile(char* pSrc, int width, int height)
 }
 
 
-int __stdcall CopyImageToLV(IMAQ_Image *LVImage) 
+int __stdcall CopyImageToLV(char *buff) 
 {
-    Image *lvImage, *myImage;
-    PixelValue pixel;
-    ImageInfo lvImageInfo, myImageInfo;
+    
     int y, LVHeight, LVWidth;
-    lvImage = LVImage->address;
-    pixel.grayscale = 32000;
-    
-    myImage = imaqCreateImage(IMAQ_IMAGE_U16, 3);
-    imaqGetImageSize(lvImage, &LVWidth, &LVHeight);
-    imaqSetImageSize(myImage, LVWidth, LVHeight);
-    imaqFillImage(myImage,pixel, NULL);
-
-    char* pSrc = new char[LVHeight * LVWidth * 2];
-    readRawFile(pSrc, LVWidth, LVHeight);
-
-    imaqGetImageInfo(myImage, &myImageInfo);
-    imaqGetImageInfo(lvImage, &lvImageInfo);
-    
-
-    for (y = 0; y < LVHeight; ++y)
-    {
-        memcpy((unsigned short*)lvImageInfo.imageStart + y * lvImageInfo.pixelsPerLine,
-            pSrc + y * LVHeight, LVWidth*2);
-    }
-    LVImage->address = lvImage;
-    delete[] pSrc;
-    return 0;
+    LVHeight = 3052;
+    LVWidth = 2500;
+    memset(buff, 200, LVWidth * LVHeight * 2);
+    return 1;
 }
 
 int __stdcall Copy_C_Image_To_LabVIEW_Image(char* LVImagePtr, int LVLineWidth, int LVWidth, int LVHeight)
@@ -163,4 +128,11 @@ int __stdcall Copy_C_Image_To_LabVIEW_Image(char* LVImagePtr, int LVLineWidth, i
     imaqDispose(testImage);
     delete[] pSrc;
     return 0;
+}
+
+
+LPTSTR __stdcall GetSerialNumber(unsigned int nSensorIP, LPTSTR lpszSerialNum)
+{
+    nErrorCode = ImageCapGetSerialNumber(nSensorIP, lpszSerialNum);
+    return lpszSerialNum;
 }

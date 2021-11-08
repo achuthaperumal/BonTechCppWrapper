@@ -26,7 +26,6 @@ typedef struct TH_PARAM
 	int nDetectorMode;
 	BOOL bCal;
 	int nDarkNum;
-
 	char *strFileName;
 
 }TH_PARAM, * PTH_PARAM;
@@ -51,9 +50,6 @@ typedef enum {
 	IMAGECAP_VIEWER_MODE,
 	IMAGECAP_CONTINUOUS_BINNING_MODE
 }nAcqMode;
-
-//Test function
-extern "C" BONTECHLIBRARY_API int __stdcall GetSphereSAandVol(double radius, double* sa, double* vol);
 
 /*Establish a connection to the X-Ray Detector
 * @param nHostIP specifies the Host IP adress in the network order.
@@ -94,11 +90,14 @@ enum{
 */
 extern "C" BONTECHLIBRARY_API int __stdcall SetAcquisitionMode(unsigned int nSensorIP, int nMode);
 
+
+extern "C" BONTECHLIBRARY_API int __stdcall SetCaptureMode(unsigned int nSensorIP, int nMode);
+
 /*
 Start Continuous Acquisition
 params Need to be updated
 */
-extern "C" BONTECHLIBRARY_API int __stdcall StartContinuousAcquisition(unsigned int nSensorIP);
+extern "C" BONTECHLIBRARY_API int __stdcall StartContinuousAcquisition(unsigned int nSensorIP, unsigned short* pImg, unsigned int nMode, LPCTSTR lpszRefPath);
 
 /*
 Stop Continuous Acquisition
@@ -109,7 +108,7 @@ extern "C" BONTECHLIBRARY_API int __stdcall StopContinuousAcquisition(unsigned i
 /*
 Capture a Single Image
 */
-extern "C" BONTECHLIBRARY_API int __stdcall CaptureSingleImage(unsigned int nSensorIP);
+extern "C" BONTECHLIBRARY_API int __stdcall CaptureSingleImage(unsigned int nSensorIP, unsigned short* pImage, unsigned int nMode, LPCTSTR calRefPath);
 
 /*
 Cancel the Image Capture
@@ -120,9 +119,12 @@ extern "C" BONTECHLIBRARY_API int __stdcall CancelSingleImageCapture(unsigned in
 /*
 Copies an Image to LabVIEW
 */
-extern "C" BONTECHLIBRARY_API int __stdcall CopyImageToLV(IMAQ_Image * LVImage);
+extern "C" BONTECHLIBRARY_API int __stdcall CopyImageToLV(char* buff);
 
 /*
 
 */
 extern "C" BONTECHLIBRARY_API int __stdcall Copy_C_Image_To_LabVIEW_Image(char* LVImagePtr, int LVLineWidth, int LVWidth, int LVHeight);
+
+
+extern "C" BONTECHLIBRARY_API LPTSTR __stdcall GetSerialNumber(unsigned int nSensorIP, LPTSTR lpszSerialNum);
