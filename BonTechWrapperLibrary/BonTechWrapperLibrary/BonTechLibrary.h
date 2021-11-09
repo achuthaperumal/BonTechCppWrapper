@@ -97,7 +97,7 @@ extern "C" BONTECHLIBRARY_API int __stdcall SetCaptureMode(unsigned int nSensorI
 Start Continuous Acquisition
 params Need to be updated
 */
-extern "C" BONTECHLIBRARY_API int __stdcall StartContinuousAcquisition(unsigned int nSensorIP, unsigned short* pImg, unsigned int nMode, LPCTSTR lpszRefPath);
+extern "C" BONTECHLIBRARY_API int __stdcall StartContinuousAcquisition(unsigned int nSensorIP, unsigned short* refImg, unsigned short* pImg, unsigned int nMode, LPCTSTR lpszRefPath);
 
 /*
 Stop Continuous Acquisition
