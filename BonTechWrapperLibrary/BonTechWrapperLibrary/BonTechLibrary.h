@@ -1,7 +1,5 @@
 #pragma once
 
-#include "nivision.h"
-
 #ifndef BONTECHLIBRARY_EXPORTS
 #define BONTECHLIBRARY_EXPORTS
 #endif // !BONTECHLIBRARY_EXPORTS
@@ -12,23 +10,6 @@
 #define BONTECHLIBRARY_API __declspec(dllimport)
 #endif
 
-//Image Data as LabVIEW Cluster
-typedef struct {
-	char* name;
-	Image* address;
-}IMAQ_Image;
-
-//Data Structure to pass to Threads
-typedef struct TH_PARAM
-{
-	unsigned short* pImage;
-	int nMode;
-	int nDetectorMode;
-	BOOL bCal;
-	int nDarkNum;
-	char *strFileName;
-
-}TH_PARAM, * PTH_PARAM;
 
 /* nAcqMode is an enum that specifies the Acquisition Modes available.  
    0 - IMAGECAP_TRIGGER_MODE
@@ -90,8 +71,13 @@ enum{
 */
 extern "C" BONTECHLIBRARY_API int __stdcall SetAcquisitionMode(unsigned int nSensorIP, int nMode);
 
-
-extern "C" BONTECHLIBRARY_API int __stdcall SetCaptureMode(unsigned int nSensorIP, int nMode);
+/*
+Sends the Capture Command to Sensor for continuous acquisition. This function needs to be called before Continuous Acquition
+* @param IP Address of the Target Device
+* @param nMode Specifies the Type of Image to Capture. enum{DARK_MODE, BRIGHT_MODE}
+* @returns The Capture Readiness of the Sensor.
+*/
+extern "C" BONTECHLIBRARY_API int __stdcall SendCaptureCommand(unsigned int nSensorIP, int nMode);
 
 /*
 Start Continuous Acquisition
@@ -101,30 +87,30 @@ extern "C" BONTECHLIBRARY_API int __stdcall StartContinuousAcquisition(unsigned 
 
 /*
 Stop Continuous Acquisition
-@param nSensorIP Specifies Sensor IP
+* @param nSensorIP Specifies Sensor IP
 */
 extern "C" BONTECHLIBRARY_API int __stdcall StopContinuousAcquisition(unsigned int nSensorIP);
 
 /*
-Capture a Single Image
+Captures Single Image from the Sensor. The Image data will be available in the supplied buffer.
+* @param nSensorIP
+* @param pImage Buffer to store the acquired image
+* @param nMode Type of Image to Capture. DARK_MODE | BRIGHT_MODE
+* @param calRefPath String that contains the path to the Calibration Data. If NULL is passed, Uncalibrated Images are acquired.
+* @returns Image Acquisition Status
 */
 extern "C" BONTECHLIBRARY_API int __stdcall CaptureSingleImage(unsigned int nSensorIP, unsigned short* pImage, unsigned int nMode, LPCTSTR calRefPath);
 
 /*
-Cancel the Image Capture
-Needs Update
+Cancels the Single Image Capture
+@params nSensorIP IP Address of the Target Device
 */
 extern "C" BONTECHLIBRARY_API int __stdcall CancelSingleImageCapture(unsigned int nSensorIP);
 
-/*
-Copies an Image to LabVIEW
-*/
-extern "C" BONTECHLIBRARY_API int __stdcall CopyImageToLV(char* buff);
 
 /*
-
+Gets the Serial Number of the Specified Device
+@params nSensorIP IP Address of the Target Device
+@params lpszSerialNum Buffer to store the Serial Number
 */
-extern "C" BONTECHLIBRARY_API int __stdcall Copy_C_Image_To_LabVIEW_Image(char* LVImagePtr, int LVLineWidth, int LVWidth, int LVHeight);
-
-
 extern "C" BONTECHLIBRARY_API LPTSTR __stdcall GetSerialNumber(unsigned int nSensorIP, LPTSTR lpszSerialNum);
