@@ -83,7 +83,7 @@ extern "C" BONTECHLIBRARY_API int __stdcall SendCaptureCommand(unsigned int nSen
 Start Continuous Acquisition
 params Need to be updated
 */
-extern "C" BONTECHLIBRARY_API int __stdcall StartContinuousAcquisition(unsigned int nSensorIP, unsigned short* refImg, unsigned short* pImg, unsigned int nMode, LPCTSTR lpszRefPath);
+extern "C" BONTECHLIBRARY_API int __stdcall StartContinuousAcquisition(unsigned int nSensorIP, unsigned short* refImg, unsigned short* pImg, unsigned int nBuffLength, unsigned int nMode, LPCTSTR lpszRefPath);
 
 /*
 Stop Continuous Acquisition
@@ -99,7 +99,7 @@ Captures Single Image from the Sensor. The Image data will be available in the s
 * @param calRefPath String that contains the path to the Calibration Data. If NULL is passed, Uncalibrated Images are acquired.
 * @returns Image Acquisition Status
 */
-extern "C" BONTECHLIBRARY_API int __stdcall CaptureSingleImage(unsigned int nSensorIP, unsigned short* pImage, unsigned int nMode, LPCTSTR calRefPath);
+extern "C" BONTECHLIBRARY_API int __stdcall CaptureSingleImage(unsigned int nSensorIP, unsigned short* pImage, unsigned int nHeight, unsigned int nWidth, unsigned int nMode, LPCTSTR calRefPath);
 
 /*
 Cancels the Single Image Capture
@@ -110,7 +110,8 @@ extern "C" BONTECHLIBRARY_API int __stdcall CancelSingleImageCapture(unsigned in
 
 /*
 Gets the Serial Number of the Specified Device
-@params nSensorIP IP Address of the Target Device
-@params lpszSerialNum Buffer to store the Serial Number
+* @params nSensorIP IP Address of the Target Device
+* @params lpszSerialNum Buffer to store the Serial Number
+* @returns Serial Number of the Target Device as string
 */
 extern "C" BONTECHLIBRARY_API LPTSTR __stdcall GetSerialNumber(unsigned int nSensorIP, LPTSTR lpszSerialNum);

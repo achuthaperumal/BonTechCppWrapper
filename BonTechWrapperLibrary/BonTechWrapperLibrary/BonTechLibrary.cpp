@@ -17,7 +17,7 @@ int __stdcall Disconnect(unsigned int nSensorIP)
     return nErrorCode;
 }
 
-int __stdcall GetImageSize(unsigned int nSensorIP, unsigned short* nWidth, unsigned short* nHeight)
+int __stdcall GetFrameSize(unsigned int nSensorIP, unsigned short* nWidth, unsigned short* nHeight)
 {
     int nErrorCode;
     unsigned short height, width;
@@ -41,11 +41,11 @@ int __stdcall SendCaptureCommand(unsigned int nSensorIP, int nMode)
     return nErrorCode;
 }
 
-int __stdcall StartContinuousAcquisition(unsigned int nSensorIP, unsigned short *refImg, unsigned short *pImage, unsigned int nMode, LPCTSTR lpszRefPath)
+int __stdcall StartContinuousAcquisition(unsigned int nSensorIP, unsigned short *refImg, unsigned short *pImage, unsigned int nBuffLength, unsigned int nMode, LPCTSTR lpszRefPath)
 {
     int nErrorCode;
     nErrorCode = ImageCapStartCapture(nSensorIP, &refImg, nMode, lpszRefPath);
-    memcpy(pImage, refImg, 3072 * 3072 * 2);
+    memcpy(pImage, refImg, nBuffLength);
     return nErrorCode;
 
 }
@@ -57,13 +57,13 @@ int __stdcall StopContinuousAcquisition(unsigned int nSensorIP)
     return nErrorCode;
 }
 
-int __stdcall CaptureSingleImage(unsigned int nSensorIP, unsigned short* pImage,unsigned int nMode, LPCTSTR calRefPath)
+int __stdcall CaptureSingleImage(unsigned int nSensorIP, unsigned short* pImage,unsigned int nHeight, unsigned int nWidth, unsigned int nMode, LPCTSTR calRefPath)
 {
     int nErrorCode;
     unsigned short* testImg;
-    testImg = new unsigned short[3072 * 3072];
+    testImg = new unsigned short[nHeight * nWidth];
     nErrorCode = ImageCapImageAcquistion(nSensorIP, testImg, nMode,calRefPath);
-    memcpy(pImage, testImg, 3072 * 3072 * 2);
+    memcpy(pImage, testImg, nHeight * nWidth * 2);
     delete[] testImg;
     return nErrorCode;
 }
