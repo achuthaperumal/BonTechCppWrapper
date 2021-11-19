@@ -152,12 +152,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>ImageCaptureDLL.lib;CalibrationDLL.lib;nivision.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Vision\Lib\MSVC64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ImageCaptureDLL.lib;CalibrationDLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BonTechLibrary.h" />
+    <ClInclude Include="CalibrationDllEx.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImageCAPDllEx.h" />
     <ClInclude Include="pch.h" />

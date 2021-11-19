@@ -76,9 +76,9 @@ int __stdcall CancelSingleImageCapture(unsigned int nSensorIP)
 }
 
 
-LPTSTR __stdcall GetSerialNumber(unsigned int nSensorIP, LPTSTR lpszSerialNum)
+int __stdcall GetSerialNumber(unsigned int nSensorIP, LPTSTR lpszSerialNum)
 {
     int nErrorCode;
     nErrorCode = ImageCapGetSerialNumber(nSensorIP, lpszSerialNum);
-    return lpszSerialNum;
+    return nErrorCode;
 }

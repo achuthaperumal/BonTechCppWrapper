@@ -51,7 +51,7 @@ extern "C" BONTECHLIBRARY_API int __stdcall Disconnect(unsigned int nSensorIP);
 * @param[out] nHeight variable to store the width of the image.
 * @returns width and height of the image in nWidth, nHeight varaibles respectively.
 */
-extern "C" BONTECHLIBRARY_API int __stdcall GetImageSize(unsigned int nSensorIP, unsigned short* nWidth, unsigned short* nHeight);
+extern "C" BONTECHLIBRARY_API int __stdcall GetFrameSize(unsigned int nSensorIP, unsigned short* nWidth, unsigned short* nHeight);
 
 /*Set the Sensor Image Acquisition Mode
 * @param nSensorIP specifies the Sensor's IP adress in the network order.
@@ -77,7 +77,7 @@ Sends the Capture Command to Sensor for continuous acquisition. This function ne
 * @param nMode Specifies the Type of Image to Capture. enum{DARK_MODE, BRIGHT_MODE}
 * @returns The Capture Readiness of the Sensor.
 */
-extern "C" BONTECHLIBRARY_API int __stdcall SendCaptureCommand(unsigned int nSensorIP, int nMode);
+extern "C" BONTECHLIBRARY_API int __stdcall SendCaptureCommand(unsigned int nSensorIP, int nCmd);
 
 /*
 Start Continuous Acquisition
@@ -114,4 +114,4 @@ Gets the Serial Number of the Specified Device
 * @params lpszSerialNum Buffer to store the Serial Number
 * @returns Serial Number of the Target Device as string
 */
-extern "C" BONTECHLIBRARY_API LPTSTR __stdcall GetSerialNumber(unsigned int nSensorIP, LPTSTR lpszSerialNum);
+extern "C" BONTECHLIBRARY_API int __stdcall GetSerialNumber(unsigned int nSensorIP, LPTSTR lpszSerialNum);
