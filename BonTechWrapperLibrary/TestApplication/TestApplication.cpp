@@ -2,11 +2,14 @@
 //
 
 #include <iostream>
-#include "nivision.h"
 #include <fstream>
+#include "nivision.h"
+#include "afxwin.h"
+#include "ImageCAPDllEx.h"
+#include "CalibrationDllEx.h"
 using namespace std;
 
-int readRawFile(unsigned short* pSrc, int width, int height)
+/*int readRawFile(unsigned short* pSrc, int width, int height)
 {
     ifstream file;
     file.open("test.raw", ios::in | ios::binary);
@@ -14,10 +17,10 @@ int readRawFile(unsigned short* pSrc, int width, int height)
     {
         file.read(reinterpret_cast<char*>(pSrc), width * height * 2);
         file.close();
-        return 1;
+        retUrn 1;
     }
     else return 0;
-}
+}*/
 
 int main()
 {
@@ -31,50 +34,49 @@ int main()
     std::cout << z<<std::endl;*/
 
     Image* myImage;
-    PixelValue pixel;
-    ImageInfo myImageInfo;
-    int LVHeight, LVWidth, handle,y;
-    LVHeight = 3052;
-    LVWidth = 2500;
-    pixel.grayscale = 65535;
-    imaqSetWindowThreadPolicy(IMAQ_SEPARATE_THREAD);
-    unsigned short* pSrc = new unsigned short[LVWidth * LVHeight * 2];
-    readRawFile(pSrc, LVWidth, LVHeight);
-
-    myImage = imaqCreateImage(IMAQ_IMAGE_U16, 3);
-    imaqSetImageSize(myImage, LVWidth, LVHeight);
-    imaqFillImage(myImage, pixel, NULL);
-    imaqGetImageInfo(myImage, &myImageInfo);
+    int handle, y, nErrorCode;
+    unsigned int nHostIP, nSensorIP;
     
+    nHostIP = 84125888;                                             //192.168.3.5
+    nSensorIP = 4026771648;                                         //192.168.3.240
+    
+    unsigned short* pImage = new unsigned short[3072 * 3072];
+    /*unsigned short* pcalImage = new unsigned short[3072 * 3072];*/
+    
+    LPCTSTR  ConfigDir = TEXT("D:\\BSDx64\\192.168.3.240\\Config");
+    LPCTSTR  calRefPath = TEXT("D:\\BSDx64\\192.168.3.240\\Reference");
+    /*CRect rectMargin(0, 0, 3072, 3072);*/
+        
+    imaqSetWindowThreadPolicy(IMAQ_SEPARATE_THREAD);
     imaqGetWindowHandle(&handle);
     imaqSetWindowSize(handle, 1280, 720);
     imaqSetWindowZoomToFit(handle, 1);
-    imaqDisplayImage(myImage, handle, 1);
 
-    cin >> y;
+    myImage = imaqCreateImage(IMAQ_IMAGE_U16, 3);   
 
-    std::cout << "ImageType = " << myImageInfo.imageType<<std::endl;
-    std::cout << "PixelsPerLine = " << myImageInfo.pixelsPerLine<<std::endl;
-    for (y = 0; y < LVHeight; ++y)
+    nErrorCode = ImageCapConnectSensor(nHostIP, nSensorIP, ConfigDir);
+    std::cout << hex << "Connect Status: "<<nErrorCode<<std::endl;
+
+    nErrorCode = ImageCapModeChange(nSensorIP, IMAGECAP_SOFTTRIGGER_MODE);
+    std::cout << hex << "Acquisition Mode Status: " << nErrorCode << std::endl;
+
+    nErrorCode = ImageCapImageAcquistion(nSensorIP, pImage, SOFTTRIGGER_INSTANT_MODE,calRefPath);
+    std::cout << hex << "Acquisition Status: " << nErrorCode << std::endl;
+
+    /*nErrorCode = ImageCalibration(pImage, calRefPath, 3072, 3072, IMAGECAP_TRIGGER_MODE, rectMargin, FALSE);
+    std::cout << dec <<"Calibration Status: " << nErrorCode << std::endl;*/
+
+    imaqArrayToImage(myImage,pImage,3072,3072);
+
+    /*for (y = 0; y < LVHeight; ++y)
     {
-        memcpy((unsigned short*)myImageInfo.imageStart + myImageInfo.pixelsPerLine * y, pSrc + LVWidth * y, LVWidth*2);
-    }
+        memcpy((unsigned short*)myImageInfo.imageStart + myImageInfo.pixelsPerLine * y, pImage + LVWidth * y, LVWidth*2);
+    }*/
 
     imaqDisplayImage(myImage, handle, 1);
     cin >> y;
 
     imaqDispose(myImage);
-    delete[] pSrc;
-
+    delete[] pImage;
+    nErrorCode = ImageCapDisConnectSensor(nSensorIP);
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
