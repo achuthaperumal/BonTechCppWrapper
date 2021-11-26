@@ -1,3 +1,3 @@
 # BonTechWrapperLibrary
 
-Wrapper Library for BonTechLVDriver
+Wrapper Library for BonTechLVDriver.
