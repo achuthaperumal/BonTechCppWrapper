@@ -1,2 +1,3 @@
 # BonTechWrapperLibrary
-This is an Interface between BonTech SDK and LabVIEW
+
+Wrapper Library for BonTechLVDriver.
