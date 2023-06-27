@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "BonTechLibrary.h"
 #include "ImageCAPDllEx.h"
+#include "CalibrationDllEx.h"
 
 
 int __stdcall Connect(unsigned int nHostIP, unsigned int nSensorIP, LPTSTR ConfigDir)
@@ -46,6 +47,18 @@ int __stdcall StartContinuousAcquisition(unsigned int nSensorIP, unsigned short 
     int nErrorCode;
     nErrorCode = ImageCapStartCapture(nSensorIP, &refImg, nMode, lpszRefPath);
     memcpy(pImage, refImg, nBuffLength);
+    return nErrorCode;
+
+}
+
+int __stdcall GenerateReference(unsigned short* pDarkImage, unsigned short* pBrightImage, int nAcqMode, LPCTSTR lpszSavePath, int nWidth, int nHeight)
+{
+    /*int nErrorCode;
+    nErrorCode = ImageCapStartCapture(nSensorIP, &refImg, nMode, lpszRefPath);
+    memcpy(pImage, refImg, nBuffLength);
+    return nErrorCode;*/
+    int nErrorCode;
+    nErrorCode = GenerateReferenceFile(pDarkImage, &pBrightImage, 1, nAcqMode, lpszSavePath, nWidth, nHeight);
     return nErrorCode;
 
 }
