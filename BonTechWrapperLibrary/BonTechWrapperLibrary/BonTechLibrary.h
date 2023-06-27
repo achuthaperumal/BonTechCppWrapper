@@ -115,3 +115,15 @@ Gets the Serial Number of the Specified Device
 * @returns Serial Number of the Target Device as string
 */
 extern "C" BONTECHLIBRARY_API int __stdcall GetSerialNumber(unsigned int nSensorIP, LPTSTR lpszSerialNum);
+
+/*
+Gets the Serial Number of the Specified Device
+* @params pDarkImage IP Address of the Target Device
+* @params pBrightImage Buffer to store the Serial Number
+* @params nAcqMode Acquisition Mode
+* @params lpszSavePath Directory where the calibration output should be stored
+* @params nWidth Width of the Image
+* @params nHeight Height of the Image
+* @returns Image Calibration Status
+*/
+extern "C" BONTECHLIBRARY_API int __stdcall GenerateReference(unsigned short* pDarkImage, unsigned short* pBrightImage, int nAcqMode, LPCTSTR lpszSavePath, int nWidth, int nHeight);
